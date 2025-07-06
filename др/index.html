@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Открытка другу</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', sans-serif;
+    }
+
+    body {
+      background: linear-gradient(to bottom, #d0eaff, #ffffff);
+      overflow: hidden;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+	   transform: scale(1); /* по умолчанию */
+		transform-origin: top left;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    .game-container {
+      width: 100vw;
+      height: 100vh;
+      position: absolute;
+      background-color: #fdfdfd;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      z-index: 10;
+    }
+
+    .target {
+      width: 60px;
+      height: 60px;
+      background: red;
+      border-radius: 50%;
+      position: absolute;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: white;
+      font-size: 14px;
+      font-weight: bold;
+      text-shadow: 1px 1px 2px black;
+    }
+
+    .score {
+      font-size: 2rem;
+      margin-bottom: 20px;
+    }
+
+    .card-container {
+      width: 922px;
+      height: 660px;
+      position: relative;
+      z-index: 5;
+    }
+
+    .page {
+      width: 100%;
+      height: 100%;
+      background: white;
+      border-radius: 20px;
+      box-shadow: 0 0 30px rgba(0, 0, 0, 0.2);
+      position: absolute;
+      top: 0;
+      left: 0;
+      display: none;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .page img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 20px;
+    }
+
+    .page.active {
+      display: flex;
+      animation: fadeInUp 0.8s ease;
+    }
+
+    .arrow {
+      font-size: 2rem;
+      cursor: pointer;
+      margin-top: 10px;
+      animation: bounce 2s infinite;
+      color: #333;
+      user-select: none;
+      position: absolute;
+      bottom: 20px;
+    }
+
+    @keyframes bounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+    }
+
+    @keyframes fadeInUp {
+      from { transform: translateY(30px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+
+    .stars {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .star {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: gold;
+      position: absolute;
+      animation: twinkle 2s infinite ease-in-out alternate;
+    }
+
+    @keyframes twinkle {
+      from { opacity: 0.2; transform: scale(0.5); }
+      to { opacity: 1; transform: scale(1.2); }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Игра -->
+  <div class="game-container" id="game">
+    <div class="score" id="score">Года: 0 / 20</div>
+    <div class="target" id="target">+1 год</div>
+  </div>
+
+  <!-- Открытка -->
+  <div class="card-container hidden" id="card">
+    <div class="page" id="page-1">
+      <img src="страница-1.png" alt="Страница 1">
+      <div class="arrow" onclick="showPage(2)">➡️</div>
+    </div>
+    <div class="page" id="page-2">
+      <img src="страница-2.png" alt="Страница 2">
+      <div class="arrow" onclick="showPage(3)">➡️</div>
+    </div>
+    <div class="page" id="page-3">
+      <div style="font-size: 2rem; font-weight: bold; text-align: center; padding: 40px;">
+        А что ты сейчас делаешь?
+      </div>
+      <div class="arrow" onclick="showPage(4)">➡️</div>
+    </div>
+    <div class="page" id="page-4">
+      <div style="font-size: 2rem; font-weight: bold; text-align: center; padding: 40px;">
+        А мог бы в тюрьме сидеть!
+      </div>
+    </div>
+  </div>
+
+  <!-- Звёздочки -->
+  <div class="stars" id="stars"></div>
+
+  <script>
+    const game = document.getElementById('game');
+    const scoreText = document.getElementById('score');
+    const target = document.getElementById('target');
+    const card = document.getElementById('card');
+    let score = 0;
+    let cardShown = false;
+
+    function moveTarget() {
+      const x = Math.random() * (window.innerWidth - 70);
+      const y = Math.random() * (window.innerHeight - 70);
+      target.style.left = `${x}px`;
+      target.style.top = `${y}px`;
+    }
+
+target.addEventListener('click', () => {
+  if (score < 20) {
+    score++;
+    scoreText.textContent = `Года: ${score} / 20`;
+    moveTarget();
+
+    // Показываем сообщения при определённых годах
+    if (score === 5) {
+      alert("Прям как у огурчика IQ");
+    } else if (score === 10) {
+      alert(" 10 раз я бы дал на рот , но не скажу кому ");
+    } else if (score === 15) {
+      alert("Ты опаздываешь!");
+    }
+  }
+
+  if (score === 20 && !cardShown) {
+    alert(" Кремируйте ее быстрее");
+
+    cardShown = true;
+    game.classList.add('hidden');
+    setTimeout(() => {
+      document.body.style.transform = 'scale(1)';
+      document.body.style.transformOrigin = 'top left';
+      document.body.style.zoom = '90%';
+
+      card.classList.remove('hidden');
+      showPage(1);
+    }, 300);
+  }
+});
+
+    function showPage(number) {
+      const pages = document.querySelectorAll('.page');
+      pages.forEach((page, index) => {
+        page.classList.remove('active');
+        if (index === number - 1) {
+          page.classList.add('active');
+        }
+      });
+    }
+
+    // Появление звёздочек
+    const starsContainer = document.getElementById('stars');
+    for (let i = 0; i < 30; i++) {
+      const star = document.createElement('div');
+      star.classList.add('star');
+      star.style.top = Math.random() * 100 + '%';
+      star.style.left = Math.random() * 100 + '%';
+      star.style.animationDelay = Math.random() * 2 + 's';
+      starsContainer.appendChild(star);
+    }
+
+    moveTarget(); // начальное перемещение
+  </script>
+</body>
+</html>
